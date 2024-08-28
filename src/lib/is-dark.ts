@@ -1,4 +1,4 @@
-export function isDark(hex) {
+export function isDark(hex: string) {
     hex = hex.replace(/^#/, '');
 
     const r = parseInt(hex.substr(0, 2), 16);

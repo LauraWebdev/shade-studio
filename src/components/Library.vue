@@ -32,7 +32,7 @@
                                         :key="key"
                                         :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
                                         :style="`background: ${color};`"
-                                        @click="copyColor(color)"
+                                        @click="copyColor(`${color}`)"
                                     >
                                         <span>{{ color }}</span>
                                         <i class="ri-file-copy-line"></i>
@@ -97,8 +97,6 @@ import type { ColorSet } from '@/colorpalette';
 import ExportDialog from '@/components/ExportDialog.vue';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { TooltipProvider } from 'radix-vue';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { isDark } from '@/lib/is-dark';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import { toast } from 'vue-sonner';
@@ -117,7 +115,7 @@ function deleteSet(set: ColorSet) {
 }
 
 function editSet(set: ColorSet) {
-    let queryParams = {};
+    let queryParams: { [key: string]: any } = {};
 
     queryParams['label'] = set.label;
     queryParams['baseColor'] = set.baseColor;
@@ -136,7 +134,7 @@ function editSet(set: ColorSet) {
     queryParams['950'] = set.palette['950'];
 
     let queryParamsString = Object.entries(queryParams)
-        .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
+        .map(([key, value]) => `${key as string}=${encodeURIComponent(value as string)}`)
         .join('&');
 
     window.location.href = `${window.location.href.split('?')[0]}?${queryParamsString}`;

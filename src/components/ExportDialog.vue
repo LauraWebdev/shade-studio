@@ -10,37 +10,37 @@
             <div class="button-group">
                 <Button
                     @click="setMode('hex')"
-                    :variant="mode === 'hex' ? '' : 'secondary'"
+                    :variant="mode === 'hex' ? 'default' : 'secondary'"
                 >
                     Hex
                 </Button>
                 <Button
                     @click="setMode('rgb')"
-                    :variant="mode === 'rgb' ? '' : 'secondary'"
+                    :variant="mode === 'rgb' ? 'default' : 'secondary'"
                 >
                     RGB
                 </Button>
                 <Button
                     @click="setMode('rawrgb')"
-                    :variant="mode === 'rawrgb' ? '' : 'secondary'"
+                    :variant="mode === 'rawrgb' ? 'default' : 'secondary'"
                 >
                     Raw RGB
                 </Button>
                 <Button
                     @click="setMode('hls')"
-                    :variant="mode === 'hls' ? '' : 'secondary'"
+                    :variant="mode === 'hls' ? 'default' : 'secondary'"
                 >
                     HLS
                 </Button>
                 <Button
                     @click="setMode('tailwind')"
-                    :variant="mode === 'tailwind' ? '' : 'secondary'"
+                    :variant="mode === 'tailwind' ? 'default' : 'secondary'"
                 >
                     Tailwind
                 </Button>
                 <Button
                     @click="setMode('svg')"
-                    :variant="mode === 'svg' ? '' : 'secondary'"
+                    :variant="mode === 'svg' ? 'default' : 'secondary'"
                 >
                     SVG
                 </Button>
@@ -81,7 +81,7 @@ function generateCSSVariable(labelSlug: string, item: [string, string], formatFu
 }
 function generateCode() {
     let labelSlug = slug(props.set.label);
-    let lines = [];
+    let lines: string[] = [];
 
     switch (mode.value) {
         default:
@@ -93,13 +93,13 @@ function generateCode() {
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'rgb':
             Object.entries(props.set.palette).forEach((item) => {
-                const colorInRGB = hexToRgb(item[1]);
+                const colorInRGB = hexToRgb(item[1]) ?? { r: 0, g: 0, b: 0 };
                 lines.push(generateCSSVariable(labelSlug, item, () => `rgb(${colorInRGB.r},${colorInRGB.g},${colorInRGB.b})`));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'rawrgb':
             Object.entries(props.set.palette).forEach((item) => {
-                const colorInRGB = hexToRgb(item[1]);
+                const colorInRGB = hexToRgb(item[1]) ?? { r: 0, g: 0, b: 0 };
                 lines.push(generateCSSVariable(labelSlug, item, () => `${colorInRGB.r},${colorInRGB.g},${colorInRGB.b}`));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
@@ -183,9 +183,9 @@ function hexToHls(hex: string): { h: number; l: number; s: number } | null {
 
     return { h: h * 360, l, s };
 }
-function hexToHslCss(hex: string): string | null {
+function hexToHslCss(hex: string): string {
     const hls = hexToHls(hex);
-    if (!hls) return null;
+    if (!hls) return `hsl(0,0%,0%)`;
 
     return `hsl(${hls.h.toFixed(0)}, ${(hls.s * 100).toFixed(0)}%, ${(hls.l * 100).toFixed(0)}%)`;
 }

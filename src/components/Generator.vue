@@ -120,7 +120,7 @@
                             :key="key"
                             :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
                             :style="`background: ${color};`"
-                            @click="copyColor(color)"
+                            @click="copyColor(`${color}`)"
                         >
                             <span class="text-xs">{{ color }}</span>
                             <i class="ri-file-copy-line"></i>
@@ -142,20 +142,19 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { isDark } from '@/lib/is-dark';
-//import Colorpicker from '@/components/Colorpicker.vue';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'vue-sonner';
 import { ColorPicker } from 'vue3-colorpicker';
 
 const inputColor = ref<string>('');
-const inputStep = ref<number>('500');
+const inputStep = ref<string>('500');
 const currentSet = ref<ColorSet>();
 
 const emits = defineEmits(['saveSet']);
 
 function generate() {
     try {
-        const palette = new ColorPalette(inputColor.value, inputStep.value);
+        const palette = new ColorPalette(inputColor.value, parseInt(inputStep.value));
         currentSet.value = palette.generateSet();
     } catch (error) {
         //
@@ -172,7 +171,7 @@ function copyColor(color: string) {
 }
 
 function copyLink(set: ColorSet) {
-    let queryParams = {};
+    let queryParams: { [key: string]: any } = {};
 
     queryParams['label'] = set.label;
     queryParams['baseColor'] = set.baseColor;
@@ -201,7 +200,7 @@ function copyLink(set: ColorSet) {
 
 onMounted(() => {
     // Deconstruct Query Parameters to Object
-    let queryParams = {};
+    let queryParams: { [key: string]: any } = {};
     let queryParamsFull = window.location.href.split('?');
     let queryParamsParts = queryParamsFull[1]?.split('&') ?? [];
     queryParamsParts.forEach((paramPart) => {
@@ -215,18 +214,20 @@ onMounted(() => {
     generate();
 
     // Set palette
-    if (queryParams['label']) currentSet.value.label = queryParams['label'];
-    if (queryParams['50']) currentSet.value.palette['50'] = queryParams['50'];
-    if (queryParams['100']) currentSet.value.palette['100'] = queryParams['100'];
-    if (queryParams['200']) currentSet.value.palette['200'] = queryParams['200'];
-    if (queryParams['300']) currentSet.value.palette['300'] = queryParams['300'];
-    if (queryParams['400']) currentSet.value.palette['400'] = queryParams['400'];
-    if (queryParams['500']) currentSet.value.palette['500'] = queryParams['500'];
-    if (queryParams['600']) currentSet.value.palette['600'] = queryParams['600'];
-    if (queryParams['700']) currentSet.value.palette['700'] = queryParams['700'];
-    if (queryParams['800']) currentSet.value.palette['800'] = queryParams['800'];
-    if (queryParams['900']) currentSet.value.palette['900'] = queryParams['900'];
-    if (queryParams['950']) currentSet.value.palette['950'] = queryParams['950'];
+    if (currentSet.value) {
+        if (queryParams['label']) currentSet.value.label = queryParams['label'];
+        if (queryParams['50']) currentSet.value.palette['50'] = queryParams['50'];
+        if (queryParams['100']) currentSet.value.palette['100'] = queryParams['100'];
+        if (queryParams['200']) currentSet.value.palette['200'] = queryParams['200'];
+        if (queryParams['300']) currentSet.value.palette['300'] = queryParams['300'];
+        if (queryParams['400']) currentSet.value.palette['400'] = queryParams['400'];
+        if (queryParams['500']) currentSet.value.palette['500'] = queryParams['500'];
+        if (queryParams['600']) currentSet.value.palette['600'] = queryParams['600'];
+        if (queryParams['700']) currentSet.value.palette['700'] = queryParams['700'];
+        if (queryParams['800']) currentSet.value.palette['800'] = queryParams['800'];
+        if (queryParams['900']) currentSet.value.palette['900'] = queryParams['900'];
+        if (queryParams['950']) currentSet.value.palette['950'] = queryParams['950'];
+    }
 });
 </script>
 
