@@ -1,10 +1,12 @@
-import './assets/reset.scss';
-import './assets/vars.scss';
+import './assets/app.scss';
 import 'remixicon/fonts/remixicon.css';
 import '@fontsource-variable/outfit';
-import './assets/app.scss';
+import Vue3ColorPicker from 'vue3-colorpicker';
+import 'vue3-colorpicker/style.css';
 
 import { createApp } from 'vue';
 import App from './App.vue';
 
-createApp(App).mount('#app');
+const app = createApp(App);
+app.use(Vue3ColorPicker);
+app.mount('#app');

@@ -1,39 +1,47 @@
 <template>
     <header>
         <Wrapper>
-            <div class="brand">
-                <span>ShadeStudio</span>
-                <span>BETA</span>
-            </div>
+            <BrandLogo />
+
+            <nav>
+                <Button variant="ghost">
+                    <i class="ri-github-line text-lg mr-2"></i>
+                    <span>GitHub</span>
+                </Button>
+                <Button
+                    variant="secondary"
+                    @click="switchTheme"
+                >
+                    <i class="ri-sun-line text-lg"></i>
+                </Button>
+            </nav>
         </Wrapper>
     </header>
 </template>
 
 <script setup lang="ts">
 import Wrapper from '@/components/Wrapper.vue';
+import BrandLogo from '@/components/BrandLogo.vue';
+import { Button } from '@/components/ui/button';
+
+function switchTheme() {
+    document.querySelector('body')?.classList.toggle('dark');
+}
 </script>
 
 <style lang="scss" scoped>
 header {
-    height: 60px;
-    background: var(--color-base-600);
-    color: var(--color-base-50);
-    display: flex;
-    align-items: center;
+    @apply flex items-center h-[60px] border-b-1;
 
-    & .brand {
-        display: flex;
-        gap: var(--unit-3);
+    & .wrapper {
+        @apply flex-row items-center;
 
-        & span:nth-child(1) {
-            font-size: 1.5rem;
-            font-weight: 600;
+        & .brand {
+            @apply flex-grow;
         }
-        & span:nth-child(2) {
-            font-weight: 500;
-            letter-spacing: 0.1rem;
-            font-size: 0.8rem !important;
-            opacity: 0.4;
+
+        & nav {
+            @apply flex items-center gap-2;
         }
     }
 }

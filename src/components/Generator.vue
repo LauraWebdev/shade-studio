@@ -3,90 +3,152 @@
         <Wrapper>
             <section class="section-input">
                 <div class="input">
-                    <input
-                        type="text"
-                        placeholder="#bc560a"
-                        v-model="inputColor"
-                        @input="generate"
-                    />
-                    <select
+                    <Popover>
+                        <PopoverTrigger as-child>
+                            <Button
+                                variant="secondary"
+                                class="picker-button"
+                            >
+                                <div
+                                    class="w-[24px] h-[24px] rounded-full mr-3"
+                                    :style="`background: ${inputColor}`"
+                                ></div>
+                                <span>{{ inputColor }}</span>
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    width="24"
+                                    height="24"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    stroke-width="2"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    class="lucide lucide-chevron-down-icon w-4 h-4 opacity-50"
+                                    aria-hidden="true"
+                                >
+                                    <path d="m6 9 6 6 6-6"></path>
+                                </svg>
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent class="flex w-full items-center">
+                            <ColorPicker
+                                :pure-color="inputColor"
+                                @update:pureColor="
+                                    (color) => {
+                                        inputColor = color;
+                                        generate();
+                                    }
+                                "
+                                :disable-alpha="true"
+                                :disable-history="true"
+                                picker-type="chrome"
+                                format="hex6"
+                                theme="black"
+                                lang="En"
+                                :is-widget="true"
+                            />
+                        </PopoverContent>
+                    </Popover>
+                    <Select
                         v-model="inputStep"
-                        @change="generate"
+                        @update:modelValue="generate"
                     >
-                        <option value="950">50</option>
-                        <option value="900">100</option>
-                        <option value="800">200</option>
-                        <option value="700">300</option>
-                        <option value="600">400</option>
-                        <option value="500">500</option>
-                        <option value="400">600</option>
-                        <option value="300">700</option>
-                        <option value="200">800</option>
-                        <option value="100">900</option>
-                        <option value="50">950</option>
-                    </select>
+                        <SelectTrigger class="w-[120px]">
+                            <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectItem value="950">50</SelectItem>
+                                <SelectItem value="900">100</SelectItem>
+                                <SelectItem value="800">200</SelectItem>
+                                <SelectItem value="700">300</SelectItem>
+                                <SelectItem value="600">400</SelectItem>
+                                <SelectItem value="500">500</SelectItem>
+                                <SelectItem value="400">600</SelectItem>
+                                <SelectItem value="300">700</SelectItem>
+                                <SelectItem value="200">800</SelectItem>
+                                <SelectItem value="100">900</SelectItem>
+                                <SelectItem value="50">950</SelectItem>
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
                 </div>
             </section>
-            <section
+
+            <Card
                 class="section-output"
                 v-if="currentSet"
             >
-                <ColorPaletteList>
-                    <ColorPaletteItem
-                        v-for="(color, key) in currentSet.palette"
-                        :key="key"
-                        :step="key"
-                        :color="color"
-                    />
-                </ColorPaletteList>
-                <div class="meta">
-                    <div class="label">
-                        <input
-                            v-if="currentSet"
+                <CardContent class="p-6 content">
+                    <div class="meta">
+                        <Input
                             v-model="currentSet.label"
+                            placeholder="Set label"
                         />
+                        <div class="button-group">
+                            <ExportDialog :set="currentSet">
+                                <Button
+                                    variant="secondary"
+                                    :disabled="!currentSet || !currentSet?.label"
+                                >
+                                    <i class="ri-brush-line text-lg mr-2"></i>
+                                    <span>Export</span>
+                                </Button>
+                            </ExportDialog>
+                            <Button
+                                variant="secondary"
+                                :disabled="!currentSet || !currentSet?.label"
+                                @click="copyLink(currentSet)"
+                            >
+                                <i class="ri-link text-lg mr-2"></i>
+                                <span>Copy Link</span>
+                            </Button>
+                            <Button
+                                variant="secondary"
+                                @click="save"
+                                :disabled="!currentSet || !currentSet?.label"
+                            >
+                                <i class="ri-save-line text-lg mr-2"></i>
+                                <span>Save Set</span>
+                            </Button>
+                        </div>
                     </div>
-                    <div class="button-group">
-                        <button
-                            :disabled="!currentSet || !currentSet?.label"
-                            @click="exportSet(currentSet)"
+                    <div class="colors">
+                        <div
+                            v-for="(color, key) in currentSet.palette"
+                            :key="key"
+                            :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
+                            :style="`background: ${color};`"
+                            @click="copyColor(color)"
                         >
-                            <i class="ri-brush-line"></i>
-                            <span>Export</span>
-                        </button>
-                        <button
-                            :disabled="!currentSet || !currentSet?.label"
-                            @click="copyLink(currentSet)"
-                        >
-                            <i class="ri-link"></i>
-                            <span>Copy Link</span>
-                        </button>
-                        <button
-                            @click="save"
-                            :disabled="!currentSet || !currentSet?.label"
-                        >
-                            <i class="ri-save-line"></i>
-                            <span>Save Set</span>
-                        </button>
+                            <span class="text-xs">{{ color }}</span>
+                            <i class="ri-file-copy-line"></i>
+                        </div>
                     </div>
-                </div>
-            </section>
+                </CardContent>
+            </Card>
         </Wrapper>
     </section>
-
-    <ExportDialog ref="exportDialog" />
 </template>
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
 import { ColorPalette, type ColorSet } from '@/colorpalette';
 import Wrapper from '@/components/Wrapper.vue';
-import ColorPaletteList from '@/components/ColorPaletteList.vue';
-import ColorPaletteItem from '@/components/ColorPaletteItem.vue';
 import ExportDialog from '@/components/ExportDialog.vue';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Card, CardContent } from '@/components/ui/card';
+import { isDark } from '@/lib/is-dark';
+//import Colorpicker from '@/components/Colorpicker.vue';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { toast } from 'vue-sonner';
+import { ColorPicker } from 'vue3-colorpicker';
 
 const inputColor = ref<string>('');
-const inputStep = ref<number>(500);
+const inputStep = ref<number>('500');
 const currentSet = ref<ColorSet>();
 
 const emits = defineEmits(['saveSet']);
@@ -104,10 +166,9 @@ function save() {
     emits('saveSet', currentSet.value);
 }
 
-const exportDialog = ref<ExportDialog>(null);
-
-function exportSet(set: ColorSet) {
-    exportDialog.value?.open(set);
+function copyColor(color: string) {
+    navigator.clipboard.writeText(color);
+    toast('Color copied.');
 }
 
 function copyLink(set: ColorSet) {
@@ -134,6 +195,8 @@ function copyLink(set: ColorSet) {
         .join('&');
 
     navigator.clipboard.writeText(`${window.location.href.split('?')[0]}?${queryParamsString}`);
+
+    toast('Link copied.');
 }
 
 onMounted(() => {
@@ -148,7 +211,7 @@ onMounted(() => {
 
     // Set Default Values
     inputColor.value = queryParams['baseColor'] ?? '#ff8b29';
-    inputStep.value = queryParams['baseStep'] ?? 500;
+    inputStep.value = queryParams['baseStep'] ?? '500';
     generate();
 
     // Set palette
@@ -169,89 +232,60 @@ onMounted(() => {
 
 <style lang="scss" scoped>
 .section-generator {
-    padding: var(--unit-5) 0;
-    display: flex;
-    flex-direction: column;
-    gap: var(--unit-4);
-    background: var(--color-base-100);
-    border-bottom: 1px solid var(--color-base-200);
+    @apply py-20;
 
-    & .section-input {
-        padding: var(--unit-4) 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+    & .wrapper {
+        @apply gap-5;
+    }
+}
+.section-input {
+    @apply flex justify-center;
 
-        & .input {
-            border-radius: 100px;
-            height: 50px;
-            background: var(--color-base-50);
-            border: 1px solid var(--color-base-300);
-            display: flex;
-            width: 100%;
-            max-width: 400px;
-            transition: 0.15s ease-in-out all;
+    & .input {
+        @apply w-full max-w-96 flex items-center gap-2;
 
-            & input {
-                font-family: var(--font-family), sans-serif;
-                font-size: 1.15rem;
-                padding: 0 var(--unit-4);
-                border: 0;
-                background: 0;
-                flex-grow: 1;
+        & .picker-button {
+            @apply w-full grow;
 
-                &:focus {
-                    outline: none;
-                }
-            }
-            & select {
-                font-family: var(--font-family), sans-serif;
-                font-size: 1.15rem;
-                padding: 0 var(--unit-4);
-                border: 0;
-                background: 0;
-
-                &:focus {
-                    outline: none;
-                }
-            }
-
-            &:focus-within {
-                background: var(--color-base-200);
-                border-color: var(--color-base-400);
+            & span {
+                @apply grow text-left;
             }
         }
     }
-    & .section-output {
-        display: grid;
-        grid-template-columns: 1fr 350px;
-        align-items: center;
-        gap: var(--unit-5);
+}
+.section-output {
+    & .content {
+        @apply flex flex-col gap-4;
 
-        & .meta {
-            display: flex;
-            flex-direction: column;
-            gap: var(--unit-3);
+        & .colors {
+            @apply grow grid grid-cols-11 self-stretch;
 
-            & .label {
-                & input {
-                    width: 100%;
-                    flex-grow: 1;
-                    height: 40px;
-                    padding: 0 10px;
-                    background: var(--color-base-50);
-                    border: 1px solid var(--color-base-300);
-                    font-family: var(--fontFamily), sans-serif;
-                    font-size: var(--fontSize);
-                    transition: 0.15s ease-in-out all;
-                    border-radius: var(--unit-3);
+            & .color-block {
+                @apply grow h-full min-h-[45px] flex items-center justify-center;
 
-                    &:focus {
-                        outline: 0;
-                        background: var(--color-base-200);
-                        border-color: var(--color-base-400);
+                & span {
+                    @apply text-xs block;
+                }
+                & i {
+                    @apply text-xl hidden;
+                }
+                &:hover {
+                    @apply cursor-copy;
+
+                    & span {
+                        @apply hidden;
+                    }
+                    & i {
+                        @apply block;
                     }
                 }
+            }
+        }
+        & .meta {
+            @apply flex gap-2;
+
+            & input {
+                @apply grow;
             }
         }
     }
