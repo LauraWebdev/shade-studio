@@ -26,7 +26,8 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss-animate": "^1.0.7",
     "vue": "^3.4.29",
-    "vue-sonner": "^1.1.5"
+    "vue-sonner": "^1.1.5",
+    "vue3-colorpicker": "^2.3.0"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.8.0",

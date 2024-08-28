@@ -41,51 +41,23 @@
                             </CardContent>
                             <CardFooter>
                                 <div class="button-group w-full">
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger as-child>
-                                                <Button
-                                                    @click="exportSet(set)"
-                                                    variant="secondary"
-                                                >
-                                                    <i class="ri-brush-line text-lg"></i>
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Export set</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger as-child>
-                                                <Button
-                                                    @click="editSet(set)"
-                                                    variant="secondary"
-                                                >
-                                                    <i class="ri-file-edit-line text-lg"></i>
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Edit set</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger as-child>
-                                                <Button
-                                                    @click="deleteSet(set)"
-                                                    variant="destructive"
-                                                >
-                                                    <i class="ri-delete-bin-line text-lg"></i>
-                                                </Button>
-                                            </TooltipTrigger>
-                                            <TooltipContent>
-                                                <p>Delete set</p>
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    <ExportDialog :set="set">
+                                        <Button variant="secondary">
+                                            <i class="ri-brush-line text-lg"></i>
+                                        </Button>
+                                    </ExportDialog>
+                                    <Button
+                                        @click="editSet(set)"
+                                        variant="secondary"
+                                    >
+                                        <i class="ri-file-edit-line text-lg"></i>
+                                    </Button>
+                                    <Button
+                                        @click="deleteSet(set)"
+                                        variant="destructive"
+                                    >
+                                        <i class="ri-delete-bin-line text-lg"></i>
+                                    </Button>
                                 </div>
                             </CardFooter>
                         </Card>
@@ -116,8 +88,6 @@
             </Card>
         </Wrapper>
     </section>
-
-    <ExportDialog ref="exportDialog" />
 </template>
 
 <script setup lang="ts">
@@ -141,12 +111,6 @@ defineProps({
 });
 
 const emits = defineEmits(['deleteSet', 'purgeAllSets']);
-
-const exportDialog = ref<ExportDialog>(null);
-
-function exportSet(set: ColorSet) {
-    exportDialog.value?.open(set);
-}
 
 function deleteSet(set: ColorSet) {
     emits('deleteSet', set);

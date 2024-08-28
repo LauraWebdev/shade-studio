@@ -32,9 +32,21 @@
                             </Button>
                         </PopoverTrigger>
                         <PopoverContent class="flex w-full items-center">
-                            <Colorpicker
-                                v-model="inputColor"
-                                @update:modelValue="generate"
+                            <ColorPicker
+                                :pure-color="inputColor"
+                                @update:pureColor="
+                                    (color) => {
+                                        inputColor = color;
+                                        generate();
+                                    }
+                                "
+                                :disable-alpha="true"
+                                :disable-history="true"
+                                picker-type="chrome"
+                                format="hex6"
+                                theme="black"
+                                lang="En"
+                                :is-widget="true"
                             />
                         </PopoverContent>
                     </Popover>
@@ -130,9 +142,10 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
 import { isDark } from '@/lib/is-dark';
-import Colorpicker from '@/components/Colorpicker.vue';
+//import Colorpicker from '@/components/Colorpicker.vue';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { toast } from 'vue-sonner';
+import { ColorPicker } from 'vue3-colorpicker';
 
 const inputColor = ref<string>('');
 const inputStep = ref<number>('500');
