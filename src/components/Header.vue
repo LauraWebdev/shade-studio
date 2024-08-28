@@ -4,7 +4,12 @@
             <BrandLogo />
 
             <nav>
-                <Button variant="ghost">
+                <Button
+                    variant="ghost"
+                    as="a"
+                    href="https://github.com/LauraWebdev/shade-studio"
+                    target="_blank"
+                >
                     <i class="ri-github-line text-lg mr-2"></i>
                     <span>GitHub</span>
                 </Button>
