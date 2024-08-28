@@ -21,7 +21,7 @@
                     </ColorPaletteList>
                     <div class="meta">
                         <div class="label">{{ set.label }}</div>
-                        <div class="actions">
+                        <div class="button-group">
                             <button @click="exportSet(set)">
                                 <i class="ri-brush-line"></i>
                                 <span>Export</span>
@@ -123,12 +123,6 @@ function editSet(set: ColorSet) {
                     font-size: 1.25rem;
                     font-weight: 500;
                     flex-grow: 1;
-                }
-
-                & .actions {
-                    display: flex;
-                    gap: var(--unit-2);
-                    align-items: center;
                 }
             }
         }

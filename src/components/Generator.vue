@@ -46,7 +46,7 @@
                             v-model="currentSet.label"
                         />
                     </div>
-                    <div class="actions">
+                    <div class="button-group">
                         <button
                             :disabled="!currentSet || !currentSet?.label"
                             @click="exportSet(currentSet)"
@@ -252,12 +252,6 @@ onMounted(() => {
                         border-color: var(--color-base-400);
                     }
                 }
-            }
-
-            & .actions {
-                display: flex;
-                gap: var(--unit-2);
-                align-items: center;
             }
         }
     }
