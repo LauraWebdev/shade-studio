@@ -1,44 +1,119 @@
 <template>
     <section class="section-library">
         <Wrapper>
-            <div v-if="!sets || sets?.length === 0">No sets saved.</div>
-            <div
-                class="list"
-                v-else
-            >
-                <div
-                    class="item"
-                    v-for="(set, n) in sets"
-                    :key="n"
-                >
-                    <ColorPaletteList>
-                        <ColorPaletteItem
-                            v-for="(color, key) in set.palette"
-                            :key="key"
-                            :step="key"
-                            :color="color"
-                        />
-                    </ColorPaletteList>
-                    <div class="meta">
-                        <div class="label">{{ set.label }}</div>
-                        <div class="button-group">
-                            <button @click="exportSet(set)">
-                                <i class="ri-brush-line"></i>
-                                <span>Export</span>
-                            </button>
-                            <button @click="editSet(set)">
-                                <i class="ri-file-edit-line"></i>
-                            </button>
-                            <button
-                                class="danger"
-                                @click="deleteSet(set)"
-                            >
-                                <i class="ri-delete-bin-line"></i>
-                            </button>
-                        </div>
+            <Card>
+                <CardHeader>
+                    <CardTitle>Saved sets</CardTitle>
+                    <CardDescription>Copy, export and edit your saved sets.</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div
+                        class="py-5 flex flex-col items-center"
+                        v-if="!sets || sets?.length === 0"
+                    >
+                        <i class="ri-pantone-line text-4xl"></i>
+                        <span class="text-lg">No sets saved.</span>
                     </div>
-                </div>
-            </div>
+                    <div
+                        class="grid grid-cols-4 gap-2"
+                        v-else
+                    >
+                        <Card
+                            v-for="(set, n) in sets"
+                            :key="n"
+                        >
+                            <CardHeader>
+                                <CardTitle>{{ set.label }}</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div class="flex flex-col">
+                                    <div
+                                        v-for="(color, key) in set.palette"
+                                        :key="key"
+                                        :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
+                                        :style="`background: ${color};`"
+                                        @click="copyColor(color)"
+                                    >
+                                        <span>{{ color }}</span>
+                                        <i class="ri-file-copy-line"></i>
+                                    </div>
+                                </div>
+                            </CardContent>
+                            <CardFooter>
+                                <div class="button-group w-full">
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger as-child>
+                                                <Button
+                                                    @click="exportSet(set)"
+                                                    variant="secondary"
+                                                >
+                                                    <i class="ri-brush-line text-lg"></i>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Export set</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger as-child>
+                                                <Button
+                                                    @click="editSet(set)"
+                                                    variant="secondary"
+                                                >
+                                                    <i class="ri-file-edit-line text-lg"></i>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Edit set</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger as-child>
+                                                <Button
+                                                    @click="deleteSet(set)"
+                                                    variant="destructive"
+                                                >
+                                                    <i class="ri-delete-bin-line text-lg"></i>
+                                                </Button>
+                                            </TooltipTrigger>
+                                            <TooltipContent>
+                                                <p>Delete set</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+                                </div>
+                            </CardFooter>
+                        </Card>
+                    </div>
+                </CardContent>
+                <CardFooter>
+                    <div class="flex justify-end w-full">
+                        <AlertDialog>
+                            <AlertDialogTrigger as-child>
+                                <Button variant="destructive">
+                                    <i class="ri-delete-bin-line text-lg mr-2"></i>
+                                    <span>Delete all sets</span>
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogHeader>
+                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                    <AlertDialogDescription>This action cannot be undone. This will permanently remove all saved sets.</AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                    <AlertDialogAction @click="purgeAllSets">Delete</AlertDialogAction>
+                                </AlertDialogFooter>
+                            </AlertDialogContent>
+                        </AlertDialog>
+                    </div>
+                </CardFooter>
+            </Card>
         </Wrapper>
     </section>
 
@@ -49,9 +124,14 @@
 import Wrapper from '@/components/Wrapper.vue';
 import { type PropType, ref } from 'vue';
 import type { ColorSet } from '@/colorpalette';
-import ColorPaletteList from '@/components/ColorPaletteList.vue';
-import ColorPaletteItem from '@/components/ColorPaletteItem.vue';
 import ExportDialog from '@/components/ExportDialog.vue';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { TooltipProvider } from 'radix-vue';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { isDark } from '@/lib/is-dark';
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
+import { toast } from 'vue-sonner';
 
 defineProps({
     sets: {
@@ -60,7 +140,7 @@ defineProps({
     },
 });
 
-const emits = defineEmits(['deleteSet']);
+const emits = defineEmits(['deleteSet', 'purgeAllSets']);
 
 const exportDialog = ref<ExportDialog>(null);
 
@@ -97,34 +177,35 @@ function editSet(set: ColorSet) {
 
     window.location.href = `${window.location.href.split('?')[0]}?${queryParamsString}`;
 }
+
+function purgeAllSets() {
+    emits('purgeAllSets');
+}
+
+function copyColor(color: string) {
+    navigator.clipboard.writeText(color);
+    toast('Color copied.');
+}
 </script>
 
 <style lang="scss" scoped>
-.section-library {
-    padding: var(--unit-5) 0;
+.color-block {
+    @apply w-full h-[45px] flex items-center justify-center;
 
-    & .list {
-        display: flex;
-        flex-direction: column;
-        gap: var(--unit-5);
+    & span {
+        @apply text-xs block;
+    }
+    & i {
+        @apply text-xl hidden;
+    }
+    &:hover {
+        @apply cursor-copy;
 
-        & .item {
-            display: grid;
-            grid-template-columns: 1fr 350px;
-            align-items: center;
-            gap: var(--unit-5);
-
-            & .meta {
-                display: flex;
-                align-items: center;
-                gap: var(--unit-3);
-
-                & .label {
-                    font-size: 1.25rem;
-                    font-weight: 500;
-                    flex-grow: 1;
-                }
-            }
+        & span {
+            @apply hidden;
+        }
+        & i {
+            @apply block;
         }
     }
 }

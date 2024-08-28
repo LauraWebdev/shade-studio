@@ -6,10 +6,6 @@
 
 <style lang="scss" scoped>
 .wrapper {
-    width: calc(100% - 30px);
-    margin: 0 auto;
-    max-width: 1100px;
-    display: flex;
-    flex-direction: column;
+    @apply w-[calc(100%-30px)] mx-auto max-w-5xl flex flex-col;
 }
 </style>

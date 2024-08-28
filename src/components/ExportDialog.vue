@@ -1,87 +1,74 @@
 <template>
-    <dialog ref="exportDialog">
-        <template v-if="set">
-            <header>
-                <h1>Export {{ set.label }}</h1>
-                <button
-                    @click="close"
-                    class="transparent"
-                >
-                    <i class="ri-close-line"></i>
-                </button>
-            </header>
+    <Dialog>
+        <DialogTrigger as-child>
+            <slot />
+        </DialogTrigger>
+        <DialogContent>
+            <DialogHeader>
+                <DialogTitle>Export {{ set.label }}</DialogTitle>
+            </DialogHeader>
             <div class="button-group">
-                <button
+                <Button
                     @click="setMode('hex')"
-                    :class="`${mode === 'hex' ? 'danger' : ''}`"
+                    :variant="mode === 'hex' ? '' : 'secondary'"
                 >
                     Hex
-                </button>
-                <button
+                </Button>
+                <Button
                     @click="setMode('rgb')"
-                    :class="`${mode === 'rgb' ? 'danger' : ''}`"
+                    :variant="mode === 'rgb' ? '' : 'secondary'"
                 >
                     RGB
-                </button>
-                <button
+                </Button>
+                <Button
                     @click="setMode('rawrgb')"
-                    :class="`${mode === 'rawrgb' ? 'danger' : ''}`"
+                    :variant="mode === 'rawrgb' ? '' : 'secondary'"
                 >
                     Raw RGB
-                </button>
-                <button
+                </Button>
+                <Button
                     @click="setMode('hls')"
-                    :class="`${mode === 'hls' ? 'danger' : ''}`"
+                    :variant="mode === 'hls' ? '' : 'secondary'"
                 >
                     HLS
-                </button>
-                <button
+                </Button>
+                <Button
                     @click="setMode('tailwind')"
-                    :class="`${mode === 'tailwind' ? 'danger' : ''}`"
+                    :variant="mode === 'tailwind' ? '' : 'secondary'"
                 >
                     Tailwind
-                </button>
-                <button
+                </Button>
+                <Button
                     @click="setMode('svg')"
-                    :class="`${mode === 'svg' ? 'danger' : ''}`"
+                    :variant="mode === 'svg' ? '' : 'secondary'"
                 >
                     SVG
-                </button>
+                </Button>
             </div>
-            <code>
-                <pre>{{ generateCode(set) }}</pre>
-            </code>
-            <button
-                @click="copyCode(set)"
-                class="primary"
-            >
-                <i class="ri-file-copy-line"></i>
+            <div class="font-mono whitespace-pre text-xs border p-4 rounded-lg leading-5 overflow-y-auto">{{ generateCode() }}</div>
+            <Button @click="copyCode()">
+                <i class="ri-file-copy-line text-lg mr-2"></i>
                 <span>Copy</span>
-            </button>
-        </template>
-    </dialog>
+            </Button>
+        </DialogContent>
+    </Dialog>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { type PropType, ref } from 'vue';
 import type { ColorSet } from '@/colorpalette';
 import slug from 'slug';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { toast } from 'vue-sonner';
 
-const exportDialog = ref<HTMLDialogElement>(null);
-const active = ref<boolean>(false);
-const set = ref<ColorSet>(null);
+const props = defineProps({
+    set: {
+        type: Object as PropType<ColorSet>,
+        required: true,
+    },
+});
 const mode = ref<string>('hex');
-
-function open(setToShow: ColorSet) {
-    set.value = setToShow;
-    exportDialog.value?.showModal();
-    active.value = true;
-}
-
-function close() {
-    exportDialog.value?.close();
-    active.value = false;
-}
 
 function setMode(newMode: string) {
     mode.value = newMode;
@@ -92,46 +79,46 @@ const INDENT = '  ';
 function generateCSSVariable(labelSlug: string, item: [string, string], formatFunction: (color: string) => string): string {
     return `${INDENT}--${labelSlug}-${item[0]}: ${formatFunction(item[1])};`;
 }
-function generateCode(set: ColorSet) {
-    let labelSlug = slug(set.label);
+function generateCode() {
+    let labelSlug = slug(props.set.label);
     let lines = [];
 
     switch (mode.value) {
         default:
             return 'not implemented';
         case 'hex':
-            Object.entries(set.palette).forEach((item) => {
+            Object.entries(props.set.palette).forEach((item) => {
                 lines.push(generateCSSVariable(labelSlug, item, (color) => color));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'rgb':
-            Object.entries(set.palette).forEach((item) => {
+            Object.entries(props.set.palette).forEach((item) => {
                 const colorInRGB = hexToRgb(item[1]);
                 lines.push(generateCSSVariable(labelSlug, item, () => `rgb(${colorInRGB.r},${colorInRGB.g},${colorInRGB.b})`));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'rawrgb':
-            Object.entries(set.palette).forEach((item) => {
+            Object.entries(props.set.palette).forEach((item) => {
                 const colorInRGB = hexToRgb(item[1]);
                 lines.push(generateCSSVariable(labelSlug, item, () => `${colorInRGB.r},${colorInRGB.g},${colorInRGB.b}`));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'hls':
-            Object.entries(set.palette).forEach((item) => {
+            Object.entries(props.set.palette).forEach((item) => {
                 lines.push(generateCSSVariable(labelSlug, item, hexToHslCss));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'tailwind':
-            Object.entries(set.palette).forEach((item) => {
+            Object.entries(props.set.palette).forEach((item) => {
                 lines.push(`${INDENT.repeat(5)}${item[0]}: ${item[1]},`);
             });
             return `module.exports = {${NEW_LINE}${INDENT}theme: {${NEW_LINE}${INDENT.repeat(2)}extend: {${NEW_LINE}${INDENT.repeat(3)}colors: {${NEW_LINE}${INDENT.repeat(4)}${labelSlug}: {${NEW_LINE}${lines.join(NEW_LINE)}${NEW_LINE}${INDENT.repeat(4)}}${NEW_LINE}${INDENT.repeat(3)}}${NEW_LINE}${INDENT.repeat(2)}}${NEW_LINE}${INDENT}}${NEW_LINE}}`;
         case 'svg':
             const squareSize = 50;
             let x = 0;
-            const svgStart = `<svg xmlns="http://www.w3.org/2000/svg" width="${Object.entries(set.palette).length * squareSize}" height="${squareSize}">`;
+            const svgStart = `<svg xmlns="http://www.w3.org/2000/svg" width="${Object.entries(props.set.palette).length * squareSize}" height="${squareSize}">`;
             lines.push(svgStart);
-            Object.entries(set.palette).forEach((item) => {
+            Object.entries(props.set.palette).forEach((item) => {
                 lines.push(`${INDENT}<rect x="${x}" y="0" width="${squareSize}" height="${squareSize}" fill="${item[1]}" />`);
                 x += squareSize;
             });
@@ -140,15 +127,10 @@ function generateCode(set: ColorSet) {
     }
 }
 
-function copyCode(set: ColorSet) {
-    navigator.clipboard.writeText(generateCode(set));
+function copyCode() {
+    navigator.clipboard.writeText(generateCode());
+    toast('Link copied.');
 }
-
-defineExpose({
-    open,
-    close,
-    active,
-});
 
 /** COLOR HELPERS **/
 function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
@@ -209,41 +191,4 @@ function hexToHslCss(hex: string): string | null {
 }
 </script>
 
-<style lang="scss" scoped>
-dialog::backdrop {
-    background: rgba(0, 0, 0, 0.4);
-}
-dialog[open] {
-    border: 0;
-    background: #fff;
-    padding: var(--unit-5);
-    border-radius: var(--unit-4);
-    box-shadow: 0px var(--unit-2) var(--unit-5) rgba(0, 0, 0, 0.3);
-    width: calc(100% - 50px);
-    max-width: 500px;
-    max-height: calc(100% - 50px);
-    display: flex;
-    flex-direction: column;
-    gap: var(--unit-4);
-
-    & header {
-        display: flex;
-        gap: var(--unit-4);
-        align-items: center;
-
-        & h1 {
-            font-size: 1.5rem;
-            flex-grow: 1;
-        }
-    }
-    & code {
-        font-size: 0.85rem;
-        line-height: 1.25rem;
-        padding: var(--unit-3);
-        background: var(--color-base-100);
-        border: 1px solid var(--color-base-200);
-        border-radius: var(--unit-2);
-        overflow: auto;
-    }
-}
-</style>
+<style lang="scss" scoped></style>

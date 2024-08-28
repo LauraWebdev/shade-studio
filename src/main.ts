@@ -1,8 +1,6 @@
-import './assets/reset.scss';
-import './assets/vars.scss';
+import './assets/app.scss';
 import 'remixicon/fonts/remixicon.css';
 import '@fontsource-variable/outfit';
-import './assets/app.scss';
 
 import { createApp } from 'vue';
 import App from './App.vue';
