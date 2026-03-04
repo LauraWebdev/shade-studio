@@ -3,53 +3,63 @@
         <DialogTrigger as-child>
             <slot />
         </DialogTrigger>
-        <DialogContent>
+        <DialogContent class="max-w-[800px] w-[90%]">
             <DialogHeader>
                 <DialogTitle>Export {{ set.label }}</DialogTitle>
             </DialogHeader>
-            <div class="button-group">
-                <Button
-                    @click="setMode('hex')"
-                    :variant="mode === 'hex' ? 'default' : 'secondary'"
-                >
-                    Hex
-                </Button>
-                <Button
-                    @click="setMode('rgb')"
-                    :variant="mode === 'rgb' ? 'default' : 'secondary'"
-                >
-                    RGB
-                </Button>
-                <Button
-                    @click="setMode('rawrgb')"
-                    :variant="mode === 'rawrgb' ? 'default' : 'secondary'"
-                >
-                    Raw RGB
-                </Button>
-                <Button
-                    @click="setMode('hls')"
-                    :variant="mode === 'hls' ? 'default' : 'secondary'"
-                >
-                    HLS
-                </Button>
-                <Button
-                    @click="setMode('tailwind')"
-                    :variant="mode === 'tailwind' ? 'default' : 'secondary'"
-                >
-                    Tailwind
-                </Button>
-                <Button
-                    @click="setMode('svg')"
-                    :variant="mode === 'svg' ? 'default' : 'secondary'"
-                >
-                    SVG
-                </Button>
+            <div class="flex flex-col gap-5 lg:grid lg:grid-cols-[1fr_2fr] lg:gap-5">
+                <div class="gap-1 flex lg:flex-col">
+                    <Button
+                        @click="setMode('hex')"
+                        :variant="mode === 'hex' ? 'default' : 'secondary'"
+                    >
+                        Hex
+                    </Button>
+                    <Button
+                        @click="setMode('rgb')"
+                        :variant="mode === 'rgb' ? 'default' : 'secondary'"
+                    >
+                        RGB
+                    </Button>
+                    <Button
+                        @click="setMode('rawrgb')"
+                        :variant="mode === 'rawrgb' ? 'default' : 'secondary'"
+                    >
+                        Raw RGB
+                    </Button>
+                    <Button
+                        @click="setMode('hls')"
+                        :variant="mode === 'hls' ? 'default' : 'secondary'"
+                    >
+                        HLS
+                    </Button>
+                    <Button
+                        @click="setMode('tailwind3')"
+                        :variant="mode === 'tailwind3' ? 'default' : 'secondary'"
+                    >
+                        Tailwind 3
+                    </Button>
+                    <Button
+                        @click="setMode('tailwind4')"
+                        :variant="mode === 'tailwind4' ? 'default' : 'secondary'"
+                    >
+                        Tailwind 4
+                    </Button>
+                    <Button
+                        @click="setMode('svg')"
+                        :variant="mode === 'svg' ? 'default' : 'secondary'"
+                    >
+                        SVG
+                    </Button>
+                </div>
+                <div class="flex flex-col gap-1">
+                    <div class="font-mono whitespace-pre text-xs border p-4 rounded-lg leading-5 overflow-y-auto">{{ generateCode() }}</div>
+                    <Button @click="copyCode()">
+                        <i class="ri-file-copy-line text-lg mr-2"></i>
+                        <span>Copy</span>
+                    </Button>
+                </div>
             </div>
-            <div class="font-mono whitespace-pre text-xs border p-4 rounded-lg leading-5 overflow-y-auto">{{ generateCode() }}</div>
-            <Button @click="copyCode()">
-                <i class="ri-file-copy-line text-lg mr-2"></i>
-                <span>Copy</span>
-            </Button>
         </DialogContent>
     </Dialog>
 </template>
@@ -108,11 +118,16 @@ function generateCode() {
                 lines.push(generateCSSVariable(labelSlug, item, hexToHslCss));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
-        case 'tailwind':
+        case 'tailwind3':
             Object.entries(props.set.palette).forEach((item) => {
                 lines.push(`${INDENT.repeat(5)}${item[0]}: ${item[1]},`);
             });
             return `module.exports = {${NEW_LINE}${INDENT}theme: {${NEW_LINE}${INDENT.repeat(2)}extend: {${NEW_LINE}${INDENT.repeat(3)}colors: {${NEW_LINE}${INDENT.repeat(4)}${labelSlug}: {${NEW_LINE}${lines.join(NEW_LINE)}${NEW_LINE}${INDENT.repeat(4)}}${NEW_LINE}${INDENT.repeat(3)}}${NEW_LINE}${INDENT.repeat(2)}}${NEW_LINE}${INDENT}}${NEW_LINE}}`;
+        case 'tailwind4':
+            Object.entries(props.set.palette).forEach((item) => {
+                lines.push(`${INDENT}--color-${labelSlug}--${item[0]}: ${item[1]};`);
+            });
+            return lines.join(NEW_LINE);
         case 'svg':
             const squareSize = 50;
             let x = 0;
@@ -129,7 +144,7 @@ function generateCode() {
 
 function copyCode() {
     navigator.clipboard.writeText(generateCode());
-    toast('Link copied.');
+    toast('Code copied.');
 }
 
 /** COLOR HELPERS **/
