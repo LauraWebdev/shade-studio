@@ -1,39 +1,42 @@
 <template>
-    <Header />
+    <TooltipProvider>
+        <Header />
 
-    <section class="page-content">
-        <aside>
-            <Generator @update-set="updateCurrentSet" />
+        <section class="page-content">
+            <aside>
+                <Generator @update-set="updateCurrentSet" />
 
-            <footer class="text-center text-xs text-muted-foreground">
-                Made with spite towards people making everything a<br/>stupid monthly SaaS subscription by
-                <a
-                    href="https://laura.media"
-                    target="_blank"
-                    >Laura Sofia Heimann</a
-                >
-            </footer>
-        </aside>
-        <main>
-            <CurrentSet
-                :set="currentSet"
-                @update-label="updateLabel"
-                @save-set="updateSets"
-            />
+                <Library
+                    :sets="sets"
+                    @delete-set="deleteSet"
+                    @purge-all-sets="purgeAllSets"
+                />
 
-            <Library
-                :sets="sets"
-                @delete-set="deleteSet"
-                @purge-all-sets="purgeAllSets"
-            />
-        </main>
-    </section>
+                <footer class="mt-auto text-center text-xs text-muted-foreground opacity-50">
+                    Made with spite towards people making everything a<br />stupid monthly SaaS subscription by
+                    <a
+                        href="https://laura.media"
+                        target="_blank"
+                        >Laura Sofia Heimann</a
+                    >
+                </footer>
+            </aside>
+            <main>
+                <CurrentSet
+                    :set="currentSet"
+                    @update-label="updateLabel"
+                    @save-set="updateSets"
+                />
+            </main>
+        </section>
 
-    <Toaster />
+        <Toaster />
+    </TooltipProvider>
 </template>
 
 <script setup lang="ts">
 import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import Header from '@/components/Header.vue';
 import Generator from '@/components/Generator.vue';
 import Library from '@/components/Library.vue';

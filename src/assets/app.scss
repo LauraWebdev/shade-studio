@@ -83,7 +83,7 @@
     }
 
     .page-content {
-        @apply flex flex-col lg:grid lg:grid-cols-[400px_1fr];
+        @apply flex flex-col lg:grid lg:grid-cols-[400px_1fr] min-h-[calc(100vh-60px)];
 
         & aside {
             @apply border-b lg:border-b-0 lg:border-r flex flex-col gap-5 p-5;

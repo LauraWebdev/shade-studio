@@ -1,6 +1,9 @@
 <template>
     <Dialog>
-        <DialogTrigger as-child>
+        <DialogTrigger
+            as-child
+            v-bind="$attrs"
+        >
             <slot />
         </DialogTrigger>
         <DialogContent class="max-w-[800px] w-[90%]">
@@ -78,6 +81,10 @@ import slug from 'slug';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { toast } from 'vue-sonner';
+
+defineOptions({
+    inheritAttrs: false,
+});
 
 const props = defineProps({
     set: {

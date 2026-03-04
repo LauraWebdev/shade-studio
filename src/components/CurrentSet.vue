@@ -11,15 +11,22 @@
                     placeholder="Set label"
                 />
                 <div class="button-group">
-                    <ExportDialog :set="set">
-                        <Button
-                            variant="secondary"
-                            :disabled="!set || !set?.label"
-                        >
-                            <i class="ri-brush-line text-lg mr-2"></i>
-                            <span>Export</span>
-                        </Button>
-                    </ExportDialog>
+                    <Tooltip>
+                        <TooltipTrigger as-child>
+                            <ExportDialog :set="set">
+                                <Button
+                                    variant="secondary"
+                                    :disabled="!set || !set?.label"
+                                >
+                                    <i class="ri-brush-line text-lg mr-2"></i>
+                                    <span>Export</span>
+                                </Button>
+                            </ExportDialog>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <span>Export set</span>
+                        </TooltipContent>
+                    </Tooltip>
                     <Button
                         variant="secondary"
                         :disabled="!set || !set?.label"
@@ -39,16 +46,24 @@
                 </div>
             </div>
             <div class="colors">
-                <div
+                <Tooltip
                     v-for="(color, key) in set.palette"
                     :key="key"
-                    :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
-                    :style="`background: ${color};`"
-                    @click="copyColor(`${color}`)"
                 >
-                    <span class="text-xs">{{ color }}</span>
-                    <i class="ri-file-copy-line"></i>
-                </div>
+                    <TooltipTrigger as-child>
+                        <div
+                            :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
+                            :style="`background: ${color};`"
+                            @click="copyColor(`${color}`)"
+                        >
+                            <span class="text-xs">{{ color }}</span>
+                            <i class="ri-file-copy-line"></i>
+                        </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                        <span>{{ color }}</span>
+                    </TooltipContent>
+                </Tooltip>
             </div>
         </CardContent>
     </Card>
@@ -60,6 +75,7 @@ import ExportDialog from '@/components/ExportDialog.vue';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { isDark } from '@/lib/is-dark';
 import { toast } from 'vue-sonner';
 
