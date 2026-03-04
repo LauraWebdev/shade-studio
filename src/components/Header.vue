@@ -18,7 +18,10 @@
                         variant="secondary"
                         @click="switchTheme"
                     >
-                        <i class="ri-sun-line text-lg"></i>
+                        <i
+                            :class="mode === 'dark' ? 'ri-moon-line' : 'ri-sun-line'"
+                            class="text-lg"
+                        ></i>
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
@@ -33,9 +36,12 @@
 import BrandLogo from '@/components/BrandLogo.vue';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { useColorMode } from '@vueuse/core';
+
+const mode = useColorMode();
 
 function switchTheme() {
-    document.querySelector('body')?.classList.toggle('dark');
+    mode.value = mode.value === 'dark' ? 'light' : 'dark';
 }
 </script>
 

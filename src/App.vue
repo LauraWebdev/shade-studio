@@ -12,7 +12,7 @@
                     @purge-all-sets="purgeAllSets"
                 />
 
-                <footer class="mt-auto text-center text-xs text-muted-foreground opacity-50">
+                <footer class="text-center text-xs text-muted-foreground opacity-50">
                     Made with spite towards people making everything a<br />stupid monthly SaaS subscription by
                     <a
                         href="https://laura.media"
@@ -27,6 +27,8 @@
                     @update-label="updateLabel"
                     @save-set="updateSets"
                 />
+
+                <Preview :set="currentSet" />
             </main>
         </section>
 
@@ -43,6 +45,7 @@ import Library from '@/components/Library.vue';
 import { type ColorSet } from '@/colorpalette';
 import { onMounted, ref } from 'vue';
 import CurrentSet from '@/components/CurrentSet.vue';
+import Preview from '@/components/Preview.vue';
 
 const sets = ref<ColorSet[]>([]);
 const currentSet = ref<ColorSet>();

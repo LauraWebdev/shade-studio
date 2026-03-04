@@ -1,7 +1,7 @@
 <template>
     <div class="brand">
         <span class="text">ShadeStudio</span>
-        <Badge variant="secondary">1.1.0</Badge>
+        <Badge variant="secondary">2.0.0</Badge>
     </div>
 </template>
 
