@@ -80,13 +80,15 @@ import { isDark } from '@/lib/is-dark';
 import { toast } from 'vue-sonner';
 
 const props = defineProps<{
-    set: ColorSet;
+    set?: ColorSet;
 }>();
 
 const emits = defineEmits(['saveSet', 'updateLabel']);
 
 function save() {
-    emits('saveSet', props.set);
+    if (props.set) {
+        emits('saveSet', props.set);
+    }
 }
 
 function onLabelInput(newLabel: string | number) {
