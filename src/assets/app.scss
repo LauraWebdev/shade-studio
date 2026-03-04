@@ -81,6 +81,14 @@
             }
         }
     }
+
+    .page-content {
+        @apply flex flex-col lg:grid lg:grid-cols-[400px_1fr];
+
+        & aside {
+            @apply border-r;
+        }
+    }
 }
 
 @layer base {

@@ -1,17 +1,27 @@
 <template>
     <Header />
 
-    <main>
-        <Generator @save-set="updateSets" />
-        <Library
-            :sets="sets"
-            @delete-set="deleteSet"
-            @purge-all-sets="purgeAllSets"
-        />
-    </main>
+    <section class="page-content">
+        <aside>
+            <Generator @update-set="updateCurrentSet" />
+        </aside>
+        <main>
+            <CurrentSet
+                :set="currentSet"
+                @update-label="updateLabel"
+                @save-set="updateSets"
+            />
+
+            <Library
+                :sets="sets"
+                @delete-set="deleteSet"
+                @purge-all-sets="purgeAllSets"
+            />
+        </main>
+    </section>
 
     <footer class="my-20 text-center text-xs text-muted-foreground">
-        Made with <3 by
+        Made with &lt;3 by
         <a
             href="https://laura.media"
             target="_blank"
@@ -29,11 +39,25 @@ import Generator from '@/components/Generator.vue';
 import Library from '@/components/Library.vue';
 import { type ColorSet } from '@/colorpalette';
 import { onMounted, ref } from 'vue';
+import CurrentSet from '@/components/CurrentSet.vue';
 
 const sets = ref<ColorSet[]>([]);
+const currentSet = ref<ColorSet>();
+
+function updateCurrentSet(newSet: ColorSet) {
+    currentSet.value = newSet;
+}
+
+function updateLabel(newLabel: string) {
+    if (currentSet.value) {
+        currentSet.value.label = newLabel;
+    }
+}
 
 function updateSets(newSet: ColorSet) {
-    sets.value.unshift(newSet);
+    // Clone the set to avoid reference sharing
+    const clonedSet = JSON.parse(JSON.stringify(newSet));
+    sets.value.unshift(clonedSet);
     saveToLocalStorage();
 }
 
