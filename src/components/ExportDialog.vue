@@ -28,10 +28,16 @@
                         Raw RGB
                     </Button>
                     <Button
-                        @click="setMode('hls')"
-                        :variant="mode === 'hls' ? 'default' : 'secondary'"
+                        @click="setMode('hsl')"
+                        :variant="mode === 'hsl' ? 'default' : 'secondary'"
                     >
-                        HLS
+                        HSL
+                    </Button>
+                    <Button
+                        @click="setMode('oklch')"
+                        :variant="mode === 'oklch' ? 'default' : 'secondary'"
+                    >
+                        OKLCH
                     </Button>
                     <Button
                         @click="setMode('tailwind3')"
@@ -65,6 +71,7 @@
 </template>
 
 <script lang="ts" setup>
+import chroma from 'chroma-js';
 import { type PropType, ref } from 'vue';
 import type { ColorSet } from '@/colorpalette';
 import slug from 'slug';
@@ -113,9 +120,14 @@ function generateCode() {
                 lines.push(generateCSSVariable(labelSlug, item, () => `${colorInRGB.r},${colorInRGB.g},${colorInRGB.b}`));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
-        case 'hls':
+        case 'hsl':
             Object.entries(props.set.palette).forEach((item) => {
                 lines.push(generateCSSVariable(labelSlug, item, hexToHslCss));
+            });
+            return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
+        case 'oklch':
+            Object.entries(props.set.palette).forEach((item) => {
+                lines.push(generateCSSVariable(labelSlug, item, hexToOklchCss));
             });
             return `:root {\r\n${lines.join(`\r\n`)}\r\n}`;
         case 'tailwind3':
@@ -128,7 +140,7 @@ function generateCode() {
                 lines.push(`${INDENT}--color-${labelSlug}--${item[0]}: ${item[1]};`);
             });
             return lines.join(NEW_LINE);
-        case 'svg':
+        case 'svg': {
             const squareSize = 50;
             let x = 0;
             const svgStart = `<svg xmlns="http://www.w3.org/2000/svg" width="${Object.entries(props.set.palette).length * squareSize}" height="${squareSize}">`;
@@ -139,6 +151,7 @@ function generateCode() {
             });
             lines.push(`</svg>`);
             return lines.join(NEW_LINE);
+        }
     }
 }
 
@@ -162,7 +175,7 @@ function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
 
     return { r, g, b };
 }
-function hexToHls(hex: string): { h: number; l: number; s: number } | null {
+function hexToHsl(hex: string): { h: number; l: number; s: number } | null {
     const rgb = hexToRgb(hex);
     if (!rgb) return null;
 
@@ -199,10 +212,14 @@ function hexToHls(hex: string): { h: number; l: number; s: number } | null {
     return { h: h * 360, l, s };
 }
 function hexToHslCss(hex: string): string {
-    const hls = hexToHls(hex);
-    if (!hls) return `hsl(0,0%,0%)`;
+    const hsl = hexToHsl(hex);
+    if (!hsl) return `hsl(0,0%,0%)`;
 
-    return `hsl(${hls.h.toFixed(0)}, ${(hls.s * 100).toFixed(0)}%, ${(hls.l * 100).toFixed(0)}%)`;
+    return `hsl(${hsl.h.toFixed(0)}, ${(hsl.s * 100).toFixed(0)}%, ${(hsl.l * 100).toFixed(0)}%)`;
+}
+function hexToOklchCss(hex: string): string {
+    const [l, c, h] = chroma(hex).oklch();
+    return `oklch(${l.toFixed(2)} ${c.toFixed(3)} ${isNaN(h) ? 0 : h.toFixed(1)})`;
 }
 </script>
 

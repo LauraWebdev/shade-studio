@@ -6,7 +6,7 @@
             <Generator @update-set="updateCurrentSet" />
 
             <footer class="text-center text-xs text-muted-foreground">
-                Made with hate towards people making everything a<br/>stupid monthly SaaS subscription by
+                Made with spite towards people making everything a<br/>stupid monthly SaaS subscription by
                 <a
                     href="https://laura.media"
                     target="_blank"
