@@ -3,7 +3,7 @@
         class="section-current-set"
         v-if="set"
     >
-        <CardContent class="p-6 content">
+        <CardContent class="p-5 content">
             <div class="meta">
                 <Input
                     :model-value="set.label"
@@ -117,7 +117,7 @@ function copyLink(set: ColorSet) {
         @apply flex flex-col gap-4;
 
         & .colors {
-            @apply grow grid grid-cols-11 self-stretch;
+            @apply grow grid grid-cols-6 lg:grid-cols-11 self-stretch;
 
             & .color-block {
                 @apply grow h-full min-h-[45px] flex items-center justify-center;
@@ -141,7 +141,7 @@ function copyLink(set: ColorSet) {
             }
         }
         & .meta {
-            @apply flex gap-2;
+            @apply grid grid-cols-1 lg:flex gap-2;
 
             & input {
                 @apply grow;

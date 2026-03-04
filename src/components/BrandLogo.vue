@@ -7,7 +7,7 @@
 
 <style scoped lang="scss">
 .brand {
-    @apply flex gap-2 items-start;
+    @apply flex gap-2 items-start grow;
 
     & > .text {
         @apply text-2xl font-bold;

@@ -50,11 +50,11 @@ class ColorPalette {
 
         // Distribute lightness values above and below the base lightness
         for (let i = -segmentsBelow; i <= segmentsAbove; i++) {
-            const lightness = baseLightness + (i * (maxLightness - minLightness)) / (segmentsAbove + segmentsBelow);
+            const lightness = baseLightness - (i * (maxLightness - minLightness)) / (segmentsAbove + segmentsBelow);
             lightnessScale.push(Math.max(Math.min(lightness, 0.99), 0.01)); // Clamp between 0.05 and 0.95
         }
 
-        return lightnessScale.reverse(); // Reverse the scale to invert the order
+        return lightnessScale; // Return the scale in the correct order
     }
 
     /**

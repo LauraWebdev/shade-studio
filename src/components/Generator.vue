@@ -50,24 +50,24 @@
             </Popover>
             <Select
                 v-model="inputStep"
-                @update:modelValue="generate"
+                @update:modelValue="() => generate()"
             >
                 <SelectTrigger class="w-[120px]">
                     <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
                     <SelectGroup>
-                        <SelectItem value="950">50</SelectItem>
-                        <SelectItem value="900">100</SelectItem>
-                        <SelectItem value="800">200</SelectItem>
-                        <SelectItem value="700">300</SelectItem>
-                        <SelectItem value="600">400</SelectItem>
+                        <SelectItem value="50">50</SelectItem>
+                        <SelectItem value="100">100</SelectItem>
+                        <SelectItem value="200">200</SelectItem>
+                        <SelectItem value="300">300</SelectItem>
+                        <SelectItem value="400">400</SelectItem>
                         <SelectItem value="500">500</SelectItem>
-                        <SelectItem value="400">600</SelectItem>
-                        <SelectItem value="300">700</SelectItem>
-                        <SelectItem value="200">800</SelectItem>
-                        <SelectItem value="100">900</SelectItem>
-                        <SelectItem value="50">950</SelectItem>
+                        <SelectItem value="600">600</SelectItem>
+                        <SelectItem value="700">700</SelectItem>
+                        <SelectItem value="800">800</SelectItem>
+                        <SelectItem value="900">900</SelectItem>
+                        <SelectItem value="950">950</SelectItem>
                     </SelectGroup>
                 </SelectContent>
             </Select>
@@ -77,7 +77,7 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-import { ColorPalette, type ColorSet } from '@/colorpalette';
+import { ColorPalette } from '@/colorpalette';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';

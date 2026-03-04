@@ -4,6 +4,15 @@
     <section class="page-content">
         <aside>
             <Generator @update-set="updateCurrentSet" />
+
+            <footer class="text-center text-xs text-muted-foreground">
+                Made with hate towards people making everything a<br/>stupid monthly SaaS subscription by
+                <a
+                    href="https://laura.media"
+                    target="_blank"
+                    >Laura Sofia Heimann</a
+                >
+            </footer>
         </aside>
         <main>
             <CurrentSet
@@ -19,15 +28,6 @@
             />
         </main>
     </section>
-
-    <footer class="my-20 text-center text-xs text-muted-foreground">
-        Made with &lt;3 by
-        <a
-            href="https://laura.media"
-            target="_blank"
-            >Laura Sofia Heimann</a
-        >
-    </footer>
 
     <Toaster />
 </template>

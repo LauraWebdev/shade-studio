@@ -86,7 +86,10 @@
         @apply flex flex-col lg:grid lg:grid-cols-[400px_1fr];
 
         & aside {
-            @apply border-r;
+            @apply border-b lg:border-b-0 lg:border-r flex flex-col gap-5 p-5;
+        }
+        & main {
+            @apply flex flex-col gap-5 p-5;
         }
     }
 }

@@ -1,98 +1,93 @@
 <template>
-    <section class="section-library">
-        <Wrapper>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Saved sets</CardTitle>
-                    <CardDescription>Copy, export and edit your saved sets.</CardDescription>
-                </CardHeader>
-                <CardContent>
-                    <div
-                        class="py-5 flex flex-col items-center"
-                        v-if="!sets || sets?.length === 0"
-                    >
-                        <i class="ri-pantone-line text-4xl"></i>
-                        <span class="text-lg">No sets saved.</span>
-                    </div>
-                    <div
-                        class="grid grid-cols-4 gap-2"
-                        v-else
-                    >
-                        <Card
-                            v-for="(set, n) in sets"
-                            :key="n"
-                        >
-                            <CardHeader>
-                                <CardTitle>{{ set.label }}</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="flex flex-col">
-                                    <div
-                                        v-for="(color, key) in set.palette"
-                                        :key="key"
-                                        :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
-                                        :style="`background: ${color};`"
-                                        @click="copyColor(`${color}`)"
-                                    >
-                                        <span>{{ color }}</span>
-                                        <i class="ri-file-copy-line"></i>
-                                    </div>
-                                </div>
-                            </CardContent>
-                            <CardFooter>
-                                <div class="button-group w-full">
-                                    <ExportDialog :set="set">
-                                        <Button variant="secondary">
-                                            <i class="ri-brush-line text-lg"></i>
-                                        </Button>
-                                    </ExportDialog>
-                                    <Button
-                                        @click="editSet(set)"
-                                        variant="secondary"
-                                    >
-                                        <i class="ri-file-edit-line text-lg"></i>
-                                    </Button>
-                                    <Button
-                                        @click="deleteSet(set)"
-                                        variant="destructive"
-                                    >
-                                        <i class="ri-delete-bin-line text-lg"></i>
-                                    </Button>
-                                </div>
-                            </CardFooter>
-                        </Card>
-                    </div>
-                </CardContent>
-                <CardFooter>
-                    <div class="flex justify-end w-full">
-                        <AlertDialog>
-                            <AlertDialogTrigger as-child>
-                                <Button variant="destructive">
-                                    <i class="ri-delete-bin-line text-lg mr-2"></i>
-                                    <span>Delete all sets</span>
+    <Card>
+        <CardHeader>
+            <CardTitle>Saved sets</CardTitle>
+            <CardDescription>Copy, export and edit your saved sets.</CardDescription>
+        </CardHeader>
+        <CardContent>
+            <div
+                class="py-5 flex flex-col items-center"
+                v-if="!sets || sets?.length === 0"
+            >
+                <i class="ri-pantone-line text-4xl"></i>
+                <span class="text-lg">No sets saved.</span>
+            </div>
+            <div
+                class="grid grid-cols-1 lg:grid-cols-4 gap-2"
+                v-else
+            >
+                <Card
+                    v-for="(set, n) in sets"
+                    :key="n"
+                >
+                    <CardHeader>
+                        <CardTitle>{{ set.label }}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="grid grid-cols-6 lg:flex lg:flex-col">
+                            <div
+                                v-for="(color, key) in set.palette"
+                                :key="key"
+                                :class="`color-block ${isDark(color) ? 'text-gray-50' : 'text-gray-950'}`"
+                                :style="`background: ${color};`"
+                                @click="copyColor(`${color}`)"
+                            >
+                                <span>{{ color }}</span>
+                                <i class="ri-file-copy-line"></i>
+                            </div>
+                        </div>
+                    </CardContent>
+                    <CardFooter>
+                        <div class="button-group w-full">
+                            <ExportDialog :set="set">
+                                <Button variant="secondary">
+                                    <i class="ri-brush-line text-lg"></i>
                                 </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>This action cannot be undone. This will permanently remove all saved sets.</AlertDialogDescription>
-                                </AlertDialogHeader>
-                                <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction @click="purgeAllSets">Delete</AlertDialogAction>
-                                </AlertDialogFooter>
-                            </AlertDialogContent>
-                        </AlertDialog>
-                    </div>
-                </CardFooter>
-            </Card>
-        </Wrapper>
-    </section>
+                            </ExportDialog>
+                            <Button
+                                @click="editSet(set)"
+                                variant="secondary"
+                            >
+                                <i class="ri-file-edit-line text-lg"></i>
+                            </Button>
+                            <Button
+                                @click="deleteSet(set)"
+                                variant="destructive"
+                            >
+                                <i class="ri-delete-bin-line text-lg"></i>
+                            </Button>
+                        </div>
+                    </CardFooter>
+                </Card>
+            </div>
+        </CardContent>
+        <CardFooter>
+            <div class="flex justify-end w-full">
+                <AlertDialog>
+                    <AlertDialogTrigger as-child>
+                        <Button variant="destructive">
+                            <i class="ri-delete-bin-line text-lg mr-2"></i>
+                            <span>Delete all sets</span>
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                            <AlertDialogDescription>This action cannot be undone. This will permanently remove all saved sets.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction @click="purgeAllSets">Delete</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
+        </CardFooter>
+    </Card>
 </template>
 
 <script setup lang="ts">
-import Wrapper from '@/components/Wrapper.vue';
-import { type PropType, ref } from 'vue';
+import { type PropType } from 'vue';
 import type { ColorSet } from '@/colorpalette';
 import ExportDialog from '@/components/ExportDialog.vue';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
